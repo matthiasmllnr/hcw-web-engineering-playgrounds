@@ -3,15 +3,24 @@
 // =========================
 
 export const initComments = () => {
-  // Show/hide comments toggle
-  var showHideBtn = document.querySelector('.show-hide')
-  var commentWrapper = document.querySelector('.comment-wrapper')
+  initToggleBtn()
+  initSubmitBtn()
+  initForm()
+}
+
+// =========================
+// Private
+// =========================
+
+const initToggleBtn = () => {
+  const showHideBtn = document.querySelector('.show-hide')
+  const commentWrapper = document.querySelector('.comment-wrapper')
 
   commentWrapper.style.display = 'none'
 
-  showHideBtn.onclick = function () {
-    var showHideText = showHideBtn.textContent
-    if (showHideText === 'Show comment') {
+  showHideBtn.onclick = () => {
+    const showHideText = showHideBtn.textContent
+    if (showHideText === 'Show comments') {
       showHideBtn.textContent = 'Hide comments'
       commentWrapper.style.display = 'block'
     } else {
@@ -19,26 +28,44 @@ export const initComments = () => {
       commentWrapper.style.display = 'none'
     }
   }
+}
 
-  // Comment form stuff
-  var form = document.querySelector('.comment-form')
-  var nameField = document.querySelector('#name')
-  var commentField = document.querySelector('#comment')
-  var list = document.querySelector('.comment-container')
+const initSubmitBtn = () => {
+  const nameField = document.querySelector('#name')
+  const commentField = document.querySelector('#comment')
+  const submitBtn = document.querySelector('#submit-comment')
 
-  form.onsubmit = function (e) {
+  const toggleSubmit = () => {
+    const nameIsPresent = nameField.value.trim().length > 0
+    const commentIsPresent = commentField.value.trim().length > 0
+    submitBtn.disabled = !(nameIsPresent && commentIsPresent)
+  }
+
+  // run once at startup
+  toggleSubmit()
+
+  // check on every keystroke
+  nameField.addEventListener('input', toggleSubmit)
+  commentField.addEventListener('input', toggleSubmit)
+}
+
+const initForm = () => {
+  const form = document.querySelector('.comment-form')
+  const nameField = document.querySelector('#name')
+  const commentField = document.querySelector('#comment')
+  const list = document.querySelector('.comment-container')
+
+  form.onsubmit = e => {
     e.preventDefault()
 
-    var listItem = document.createElement('li')
-    var namePara = document.createElement('p')
-    var commentPara = document.createElement('p')
-    var nameValue = nameField.valeu
-    var commentValue = commentField.value
+    const listItem = document.createElement('li')
+    const namePara = document.createElement('p')
+    const commentPara = document.createElement('p')
+    const nameValue = nameField.value
+    const commentValue = commentField.value
 
-    namePara.textContnet = nameValue
+    namePara.textContent = nameValue
     commentPara.textContent = commentValue
-
-    console.log(nameValue)
 
     list.appendChild(listItem)
     listItem.appendChild(namePara)

@@ -3,34 +3,47 @@
 // =========================
 
 export const initSearch = () => {
-  document.querySelector('.search').addEventListener('submit', function (e) {
+  const searchInput = document.querySelector('.search')
+  const article = document.querySelector('article')
+  if (!searchInput || !article) return
+
+  searchInput.addEventListener('submit', e => {
     e.preventDefault()
 
-    document.querySelectorAll('.highlight').forEach(function (el) {
-      var parent = el.parentNode
+    // remove previous highlights, but only inside <article>
+    article.querySelectorAll('mark.highlight').forEach(el => {
+      const parent = el.parentNode
       parent.replaceChild(document.createTextNode(el.textContent), el)
       parent.normalize()
     })
 
-    var searchKey = this.q.value.trim()
+    const searchKey = searchInput.q.value.trim()
     if (!searchKey) return
 
-    var regex = new RegExp('(' + searchKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi')
+    const regex = new RegExp('(' + searchKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi')
 
-    function walk(node) {
-      if (node.nodeType === 3) {
-        // Text node
-        var match = node.nodeValue.match(regex)
-        if (match) {
-          var span = document.createElement('span')
+    // search only the <article> subtree
+    const search = node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        if (regex.test(node.nodeValue)) {
+          const span = document.createElement('span')
           span.innerHTML = node.nodeValue.replace(regex, '<mark class="highlight">$1</mark>')
-          node.replaceWith.apply(node, span.childNodes)
+          // replace text node with the new nodes
+          node.replaceWith(...span.childNodes)
         }
-      } else if (node.nodeType === 1 && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE' && node.tagName !== 'FORM') {
-        node.childNodes.forEach(walk)
+      } else if (
+        node.nodeType === Node.ELEMENT_NODE &&
+        node.tagName !== 'SCRIPT' &&
+        node.tagName !== 'STYLE' &&
+        node.tagName !== 'FORM' &&
+        node.tagName !== 'MARK' // don't recurse into existing highlights
+      ) {
+        // use a static array so live updates don't affect iteration
+        // (node.childNodes is a live NodeList)
+        Array.from(node.childNodes).forEach(search)
       }
     }
 
-    walk(document.body)
+    search(article)
   })
 }

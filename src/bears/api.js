@@ -14,14 +14,13 @@ var params = {
 // Public
 // =========================
 
-export function fetchWikiEntries() {
-  return fetch(baseUrl + '?' + new URLSearchParams(params).toString()).then(function (res) {
-    return res.json()
-  })
+export const fetchWikiEntries = async () => {
+  const res = await fetch(baseUrl + '?' + new URLSearchParams(params).toString())
+  return await res.json()
 }
 
-export function fetchImageUrl(fileName) {
-  var imageParams = {
+export const fetchImageUrl = async fileName => {
+  const imageParams = {
     action: 'query',
     titles: 'File:' + fileName,
     prop: 'imageinfo',
@@ -30,14 +29,10 @@ export function fetchImageUrl(fileName) {
     origin: '*',
   }
 
-  var url = baseUrl + '?' + new URLSearchParams(imageParams).toString()
-  return fetch(url)
-    .then(function (res) {
-      return res.json()
-    })
-    .then(function (data) {
-      var pages = data.query.pages
-      var page = Object.values(pages)[0]
-      return page.imageinfo[0].url
-    })
+  const url = baseUrl + '?' + new URLSearchParams(imageParams).toString()
+  const res = await fetch(url)
+  const data = await res.json()
+  const pages = data.query.pages
+  const page = Object.values(pages)[0]
+  return page.imageinfo[0].url
 }

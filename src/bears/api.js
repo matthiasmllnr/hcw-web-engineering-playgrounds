@@ -1,3 +1,13 @@
+// =========================
+// Imports
+// =========================
+
+import { buildUrl, fetchJson } from '../utils.js'
+
+// =========================
+// Global Variables
+// =========================
+
 var baseUrl = 'https://en.wikipedia.org/w/api.php'
 var title = 'List_of_ursids'
 
@@ -15,8 +25,8 @@ var params = {
 // =========================
 
 export const fetchWikiEntries = async () => {
-  const res = await fetch(baseUrl + '?' + new URLSearchParams(params).toString())
-  return await res.json()
+  const url = buildUrl(baseUrl, params)
+  return await fetchJson(url, 'load Wikipedia bear list')
 }
 
 export const fetchImageUrl = async fileName => {
@@ -29,10 +39,12 @@ export const fetchImageUrl = async fileName => {
     origin: '*',
   }
 
-  const url = baseUrl + '?' + new URLSearchParams(imageParams).toString()
-  const res = await fetch(url)
-  const data = await res.json()
-  const pages = data.query.pages
+  const url = buildUrl(baseUrl, imageParams)
+  const data = await fetchJson(url, `resolve image URL for ${fileName}`)
+
+  const pages = data?.query?.pages || {}
   const page = Object.values(pages)[0]
-  return page.imageinfo[0].url
+
+  const imageUrl = page?.imageinfo?.[0]?.url || null
+  return imageUrl
 }

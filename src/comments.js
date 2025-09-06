@@ -1,11 +1,21 @@
 // =========================
+// Imports
+// =========================
+
+import { showError } from './utils.js'
+
+// =========================
 // Public
 // =========================
 
 export const initComments = () => {
-  initToggleBtn()
-  initSubmitBtn()
-  initForm()
+  try {
+    initToggleBtn()
+    initSubmitBtn()
+    initForm()
+  } catch (err) {
+    showError('Comments failure. Please reload the page.')
+  }
 }
 
 // =========================
@@ -58,20 +68,29 @@ const initForm = () => {
   form.onsubmit = e => {
     e.preventDefault()
 
-    const listItem = document.createElement('li')
-    const namePara = document.createElement('p')
-    const commentPara = document.createElement('p')
-    const nameValue = nameField.value
-    const commentValue = commentField.value
+    try {
+      const listItem = document.createElement('li')
+      const namePara = document.createElement('p')
+      const commentPara = document.createElement('p')
+      const nameValue = nameField.value
+      const commentValue = commentField.value
 
-    namePara.textContent = nameValue
-    commentPara.textContent = commentValue
+      if (!nameValue || !commentValue) {
+        showError('Please enter your name and a comment.')
+        return
+      }
 
-    list.appendChild(listItem)
-    listItem.appendChild(namePara)
-    listItem.appendChild(commentPara)
+      namePara.textContent = nameValue
+      commentPara.textContent = commentValue
 
-    nameField.value = ''
-    commentField.value = ''
+      list.appendChild(listItem)
+      listItem.appendChild(namePara)
+      listItem.appendChild(commentPara)
+
+      nameField.value = ''
+      commentField.value = ''
+    } catch (err) {
+      showError('Could not add your comment. Please try again.')
+    }
   }
 }

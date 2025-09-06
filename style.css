@@ -248,3 +248,16 @@ audio {
 .comment-container li p:nth-child(2) {
   flex: 5;
 }
+
+.error-messages {
+  margin-bottom: 5px;
+}
+
+.error-message {
+  background: #da4f49;
+  border: 1px solid #9d261d;
+  color: white;
+  padding: 5px;
+  margin: 5px 0;
+  font-size: 1.4rem;
+}

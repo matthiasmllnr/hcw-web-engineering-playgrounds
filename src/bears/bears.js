@@ -1,3 +1,4 @@
+import { imageExists, showError } from '../utils.js'
 import { fetchImageUrl, fetchWikiEntries } from './api.js'
 
 const IMAGE_PLACEHOLDER = '/media/no_image_placeholder.png'
@@ -7,8 +8,12 @@ const IMAGE_PLACEHOLDER = '/media/no_image_placeholder.png'
 // =========================
 
 export const initBears = async () => {
-  const data = await fetchWikiEntries()
-  await extractBears(data.parse.wikitext['*'])
+  try {
+    const data = await fetchWikiEntries()
+    await extractBears(data.parse.wikitext['*'])
+  } catch (err) {
+    showError(err.message || 'Failed to load bears. Please try again later.')
+  }
 }
 
 // =========================
@@ -36,10 +41,31 @@ const extractBears = async wikitext => {
     const rangeText = rangeMatch ? rangeMatch[1].trim() : 'Unknown'
     const rangeImageName = rangeMatch ? rangeMatch[2].trim().replace('File:', '') : null
 
-    const [imageUrlBear, imageUrlRange] = await Promise.all([
-      fetchImageUrl(fileName),
-      rangeImageName ? fetchImageUrl(rangeImageName) : Promise.resolve(null),
-    ])
+    // Fetch both image URLs; if any request fails, we treat result as null and fallback later
+    let imageUrlBear = null
+    let imageUrlRange = null
+
+    try {
+      imageUrlBear = await fetchImageUrl(fileName)
+    } catch {
+      imageUrlBear = null
+    }
+
+    if (rangeImageName) {
+      try {
+        imageUrlRange = await fetchImageUrl(rangeImageName)
+      } catch {
+        imageUrlRange = null
+      }
+    }
+
+    // Check image availability
+    if (!(imageUrlBear && (await imageExists(imageUrlBear)))) {
+      imageUrlBear = PLACEHOLDER_IMG
+    }
+    if (imageUrlRange && !(await imageExists(imageUrlRange))) {
+      imageUrlRange = PLACEHOLDER_IMG
+    }
 
     return {
       name: nameMatch[1],

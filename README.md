@@ -58,12 +58,108 @@ Fix application code and answer the questions:
 
 > **What bad coding practices did you find? Why is it a bad practice and how did you fix it?**
 > 
-> _Present your findings here..._
->
-> ```js
-> console.log('Make use of markdown codesnippets to show and explain good/bad practices!')
-> ```
-
+> - **Inline `<script>` with all logic in HTML**
+>   - **Why it’s a bad practice:** Mixes structure and behavior; hard to maintain and discourages modular design.
+>   - **Fix:** Moved JS into `/src` and loaded via ESM.
+>   - **Before**
+>     ```html
+>     <script>
+>       // hundreds of lines...
+>     </script>
+>     ```
+>   - **After**
+>     ```html
+>     <script type="module" src="./src/app.js"></script>
+>     ```
+> 
+> - **One giant “spaghetti” file**
+>   - **Why it’s a bad practice:** No feature boundaries; any change risks breaking unrelated parts.
+>   - **Fix:** Split by responsibility: `app.js` (wire-up), `api.js` (Wikipedia calls), `bears.js` (parse/flow), `comments.js`, `search.js` (feature logic), `utils.js` (helpers).
+> 
+> - **Callback chains (`.then()` nesting)**
+>   - **Why it’s a bad practice:** Hard to read, harder to handle errors; order control is tricky.
+>   - **Fix:** Converted to `async/await` and used `Promise.all` to keep the Wikipedia row order.
+>   - **Before**
+>     ```js
+>     fetch(url).then(res => res.json()).then(data => { /* nested work */ })
+>     ```
+>   - **After**
+>     ```js
+>     const res = await fetch(url);
+>     const data = await res.json();
+>     ```
+> 
+> - **`function` everywhere, no modern syntax**
+>   - **Why it’s a bad practice:** Verbose; inconsistent with modern JS style.
+>   - **Fix:** Switched to arrow functions throughout (handlers, helpers, module exports).
+>   - **After**
+>     ```js
+>     export const initBears = async () => { /* ... */ }
+>     ```
+> 
+> - **Broken comment form due to typos + always-enabled submit**
+>   - **Why it’s a bad practice:** `nameField.valeu` / `textContnet` crash UX; users can submit empty data.
+>   - **Fix:** Corrected property names, added live validation, disabled submit until both fields are filled.
+>   - **After**
+>     ```js
+>     submitBtn.disabled = !(name.value.trim() && comment.value.trim());
+>     ```
+> 
+> - **No error handling surfaced to the user**
+>   - **Why it’s a bad practice:** On network failures users see a broken UI with no feedback.
+>   - **Fix:** Wrapped fetch/parse in `try/catch`, added `showError()` that renders into `#error-messages` and auto-hides after 5s.
+>   - **After**
+>     ```js
+>     try { /* fetch + render */ } catch (e) { showError('Failed to load bears.'); }
+>     ```
+> 
+> - **Image URLs not verified; broken images in UI**
+>   - **Why it’s a bad practice:** Broken `<img>` elements look unprofessional and harm accessibility.
+>   - **Fix:** Checked availability with `imageExists()`; used a local placeholder (`/media/no_image_placeholder.png`) when missing/broken.
+>   - **After**
+>     ```js
+>     const ok = await imageExists(url);
+>     img.src = ok ? url : '/media/no_image_placeholder.png';
+>     ```
+> 
+> - **String concatenation for HTML**
+>   - **Why it’s a bad practice:** Concatenating HTML strings is hard to read, error-prone, and unsafe if any dynamic content isn’t sanitized. It also forces us to use `innerHTML +=`, which re-parses the DOM and can cause subtle bugs.
+>   - **Fix:** Switched to creating real DOM nodes with `document.createElement`, setting attributes and textContent directly, and appending children.
+>   - **Before**
+>     ```js
+>     moreBears.innerHTML += '<div class="bear">' +
+>       '<img src="' + bear.image + '" alt="Image of ' + bear.name + '">' +
+>       '<p><b>' + bear.name + '</b> (' + bear.binomial + ')</p>' +
+>       '<p>Range: ' + bear.rangeText + '</p>' +
+>       '</div>';
+>     ```
+>   - **After**
+>     ```js
+>     const getBearEntryDiv = (bear) => {
+>       const div = document.createElement('div');
+>       div.className = 'bear';
+> 
+>       const imgBear = document.createElement('img');
+>       imgBear.src = bear.image || IMAGE_PLACEHOLDER;
+>       imgBear.alt = bear.image ? `Image of ${bear.name}` : 'No Image';
+>       div.appendChild(imgBear);
+> 
+>       const info = document.createElement('p');
+>       info.innerHTML = `<b>${bear.name}</b> (${bear.binomial})`;
+>       div.appendChild(info);
+> 
+>       const range = document.createElement('p');
+>       range.textContent = `Range: ${bear.rangeText}`;
+>       div.appendChild(range);
+> 
+>       return div;
+>     };
+>     ```
+>   - **Benefit:** Safer, clearer structure, easier to extend (add classes, listeners, styles), and avoids repeated HTML string parsing.
+> 
+> - **Mixed concerns (API + parsing + DOM in one place)**
+>   - **Why it’s a bad practice:** Hard to test/replace parts; unreadable flow.
+>   - **Fix:** Kept network in `api.js`, parsing/flow in `bears.js`, UI in feature modules; added small utilities (`buildUrl`, `imageExists`, `showError`) for reuse.
 
 ## 2. Dependency- and Build Management Playground
 Build the application with ``npm`` and a build and a dependency management tool of your choice (e.g. [Vite](https://vitejs.dev/), [Webpack](https://webpack.js.org/), or others). Additionally, refactor the comments section to be a web component using shadow dom and templates.

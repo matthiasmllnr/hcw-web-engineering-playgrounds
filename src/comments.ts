@@ -2,7 +2,7 @@
 // Imports
 // =========================
 
-import { showError } from './utils.js'
+import { showError } from './utils'
 
 // =========================
 // Public
@@ -23,8 +23,13 @@ export const initComments = () => {
 // =========================
 
 const initToggleBtn = () => {
-  const showHideBtn = document.querySelector('.show-hide')
-  const commentWrapper = document.querySelector('.comment-wrapper')
+  const showHideBtn = document.querySelector<HTMLButtonElement>('.show-hide')
+  const commentWrapper = document.querySelector<HTMLDivElement>('.comment-wrapper')
+
+  if (!showHideBtn || !commentWrapper) {
+    console.error('[comments.ts] (initToggleBtn) Required fields are missing!')
+    return
+  }
 
   commentWrapper.style.display = 'none'
 
@@ -41,9 +46,14 @@ const initToggleBtn = () => {
 }
 
 const initSubmitBtn = () => {
-  const nameField = document.querySelector('#name')
-  const commentField = document.querySelector('#comment')
-  const submitBtn = document.querySelector('#submit-comment')
+  const nameField = document.querySelector<HTMLInputElement>('#name')
+  const commentField = document.querySelector<HTMLInputElement>('#comment')
+  const submitBtn = document.querySelector<HTMLButtonElement>('#submit-comment')
+
+  if (!nameField || !commentField || !submitBtn) {
+    console.error('[comments.ts] (initSubmitBtn) Required fields are missing!')
+    return
+  }
 
   const toggleSubmit = () => {
     const nameIsPresent = nameField.value.trim().length > 0
@@ -60,10 +70,15 @@ const initSubmitBtn = () => {
 }
 
 const initForm = () => {
-  const form = document.querySelector('.comment-form')
-  const nameField = document.querySelector('#name')
-  const commentField = document.querySelector('#comment')
-  const list = document.querySelector('.comment-container')
+  const form = document.querySelector<HTMLFormElement>('.comment-form')
+  const nameField = document.querySelector<HTMLInputElement>('#name')
+  const commentField = document.querySelector<HTMLInputElement>('#comment')
+  const list = document.querySelector<HTMLUListElement>('.comment-container')
+
+  if (!form || !nameField || !commentField || !list) {
+    console.error('[comments.ts] (initForm) Required fields are missing!')
+    return
+  }
 
   form.onsubmit = e => {
     e.preventDefault()

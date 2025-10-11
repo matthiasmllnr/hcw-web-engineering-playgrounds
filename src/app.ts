@@ -2,9 +2,9 @@
 // Imports
 // =========================
 
-import { initBears } from './bears/bears.js'
-import { initComments } from './comments.js'
-import { initSearch } from './search.js'
+import { initBears } from '@/bears/bears'
+import { initComments } from '@/comments'
+import { initSearch } from '@/search'
 
 // -------------------------
 // Search

@@ -1,7 +1,19 @@
-import { imageExists, showError } from '../utils.js'
-import { fetchImageUrl, fetchWikiEntries } from './api.js'
+import { imageExists, showError } from '@/utils'
+import { fetchImageUrl, fetchWikiEntries } from './api'
 
-const IMAGE_PLACEHOLDER = '/media/no_image_placeholder.png'
+import IMAGE_PLACEHOLDER from '@/assets/no_image_placeholder.png'
+
+// =========================
+// Types
+// =========================
+
+export type Bear = {
+  name: string
+  binomial: string
+  image: string
+  rangeText: string
+  rangeImage: string
+}
 
 // =========================
 // Public
@@ -11,7 +23,7 @@ export const initBears = async () => {
   try {
     const data = await fetchWikiEntries()
     await extractBears(data.parse.wikitext['*'])
-  } catch (err) {
+  } catch (err: any) {
     showError(err.message || 'Failed to load bears. Please try again later.')
   }
 }
@@ -20,9 +32,9 @@ export const initBears = async () => {
 // Private
 // =========================
 
-const extractBears = async wikitext => {
+const extractBears = async (wikitext: string) => {
   const speciesTables = wikitext.split('{{Species table/end}}')
-  let rows = []
+  let rows: any[] = []
   speciesTables.forEach(table => {
     rows = rows.concat(table.split('{{Species table/row'))
   })
@@ -61,10 +73,10 @@ const extractBears = async wikitext => {
 
     // Check image availability
     if (!(imageUrlBear && (await imageExists(imageUrlBear)))) {
-      imageUrlBear = PLACEHOLDER_IMG
+      imageUrlBear = IMAGE_PLACEHOLDER
     }
     if (imageUrlRange && !(await imageExists(imageUrlRange))) {
-      imageUrlRange = PLACEHOLDER_IMG
+      imageUrlRange = IMAGE_PLACEHOLDER
     }
 
     return {
@@ -73,19 +85,19 @@ const extractBears = async wikitext => {
       image: imageUrlBear,
       rangeText,
       rangeImage: imageUrlRange,
-    }
+    } as Bear
   })
 
   const items = await Promise.all(bearPromises)
-  const bears = items.filter(Boolean)
+  const bears: Bear[] = items.filter(b => !!b)
 
   const moreBears = document.querySelector('.more_bears')
-  bears.forEach(bear => {
-    moreBears.appendChild(getBearEntryDiv(bear))
+  bears.forEach((bear: Bear) => {
+    moreBears?.appendChild(getBearEntryDiv(bear))
   })
 }
 
-const getBearEntryDiv = bear => {
+const getBearEntryDiv = (bear: Bear) => {
   const div = document.createElement('div')
   div.className = 'bear'
 

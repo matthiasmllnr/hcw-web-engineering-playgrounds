@@ -2,9 +2,9 @@
 // Public
 // =========================
 
-export const buildUrl = (base, params) => `${base}?${new URLSearchParams(params).toString()}`
+export const buildUrl = (base: string, params: any) => `${base}?${new URLSearchParams(params).toString()}`
 
-export const fetchJson = async (url, context = 'request') => {
+export const fetchJson = async (url: string, context: string = 'request') => {
   try {
     const res = await fetch(url)
     if (!res.ok) {
@@ -19,7 +19,7 @@ export const fetchJson = async (url, context = 'request') => {
   }
 }
 
-export const imageExists = src =>
+export const imageExists = (src: string) =>
   new Promise(resolve => {
     const img = new Image()
     img.onload = () => resolve(true)
@@ -27,7 +27,7 @@ export const imageExists = src =>
     img.src = src
   })
 
-export const showError = message => {
+export const showError = (message: string) => {
   const container = document.getElementById('error-messages')
   const target = container || document.querySelector('main') || document.body
 

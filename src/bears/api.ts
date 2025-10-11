@@ -2,16 +2,25 @@
 // Imports
 // =========================
 
-import { buildUrl, fetchJson } from '../utils.js'
+import { buildUrl, fetchJson } from '@/utils'
+
+// =========================
+// Types
+// =========================
+
+type Page = { imageinfo?: { url?: string }[] }
+type ImageInfoResponse = {
+  query?: { pages?: Record<string, Page> }
+}
 
 // =========================
 // Global Variables
 // =========================
 
-var baseUrl = 'https://en.wikipedia.org/w/api.php'
-var title = 'List_of_ursids'
+const baseUrl: string = 'https://en.wikipedia.org/w/api.php'
+const title: string = 'List_of_ursids'
 
-var params = {
+var params: any = {
   action: 'parse',
   page: title,
   prop: 'wikitext',
@@ -29,7 +38,7 @@ export const fetchWikiEntries = async () => {
   return await fetchJson(url, 'load Wikipedia bear list')
 }
 
-export const fetchImageUrl = async fileName => {
+export const fetchImageUrl = async (fileName: string) => {
   const imageParams = {
     action: 'query',
     titles: 'File:' + fileName,
@@ -40,7 +49,7 @@ export const fetchImageUrl = async fileName => {
   }
 
   const url = buildUrl(baseUrl, imageParams)
-  const data = await fetchJson(url, `resolve image URL for ${fileName}`)
+  const data = (await fetchJson(url, `resolve image URL for ${fileName}`)) as ImageInfoResponse
 
   const pages = data?.query?.pages || {}
   const page = Object.values(pages)[0]

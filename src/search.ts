@@ -2,10 +2,12 @@
 // Public
 // =========================
 
+import { showError } from '@/utils'
+
 export const initSearch = () => {
   try {
-    const searchInput = document.querySelector('.search')
-    const article = document.querySelector('article')
+    const searchInput = document.querySelector<HTMLFormElement>('.search')
+    const article = document.querySelector<HTMLElement>('article')
     if (!searchInput || !article) return
 
     searchInput.addEventListener('submit', e => {
@@ -15,8 +17,10 @@ export const initSearch = () => {
         // remove previous highlights, but only inside <article>
         article.querySelectorAll('mark.highlight').forEach(el => {
           const parent = el.parentNode
-          parent.replaceChild(document.createTextNode(el.textContent), el)
-          parent.normalize()
+          if (parent) {
+            parent.replaceChild(document.createTextNode(el.textContent), el)
+            parent.normalize()
+          }
         })
 
         const searchKey = searchInput.q.value.trim()
@@ -25,16 +29,17 @@ export const initSearch = () => {
         const regex = new RegExp('(' + searchKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi')
 
         // search only the <article> subtree
-        const search = node => {
+        const search = (node: Node) => {
           if (node.nodeType === Node.TEXT_NODE) {
-            if (regex.test(node.nodeValue)) {
+            const textNode = node as ChildNode
+            if (textNode.nodeValue && regex.test(textNode.nodeValue)) {
               const span = document.createElement('span')
-              span.innerHTML = node.nodeValue.replace(regex, '<mark class="highlight">$1</mark>')
+              span.innerHTML = textNode.nodeValue.replace(regex, '<mark class="highlight">$1</mark>')
               // replace text node with the new nodes
-              node.replaceWith(...span.childNodes)
+              textNode.replaceWith(...span.childNodes)
             }
           } else if (
-            node.nodeType === Node.ELEMENT_NODE &&
+            node instanceof Element &&
             node.tagName !== 'SCRIPT' &&
             node.tagName !== 'STYLE' &&
             node.tagName !== 'FORM' &&

@@ -3,20 +3,14 @@
 // =========================
 
 import { initBears } from '@/bears/bears';
-import { initComments } from '@/comments';
 import { initSearch } from '@/search';
+import '@components/comments-section/comments-section';
 
 // -------------------------
 // Search
 // -------------------------
 
 initSearch();
-
-// -------------------------
-// Comments
-// -------------------------
-
-initComments();
 
 // -------------------------
 // Bears

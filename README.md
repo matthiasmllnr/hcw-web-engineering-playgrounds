@@ -182,8 +182,7 @@ Build the application with ``npm`` and a build and a dependency management tool 
   * (3) Deployment Workflow is triggered when developers push into `production` branch. It should at least lint and build your source code. Afterwards the build artifacts of your application should be automatically deployed to Github Pages (or another hosting provider of your choice).
 
 > 
-> _Insert GitHub Pages URL here......_
->
+> 🌐 **Live Demo:** [hcw-web-engineering-playgrounds on GitHub Pages](https://matthiasmllnr.github.io/hcw-web-engineering-playgrounds/)
 > 
 
 **ESLint Configurations**

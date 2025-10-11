@@ -1,42 +1,58 @@
 // =========================
+// Imports
+// =========================
+
+import { showError, toErrorMessage } from '@/utils';
+
+// =========================
 // Public
 // =========================
 
-import { showError } from '@/utils'
-
 export const initSearch = () => {
   try {
-    const searchInput = document.querySelector<HTMLFormElement>('.search')
-    const article = document.querySelector<HTMLElement>('article')
-    if (!searchInput || !article) return
+    const searchForm = document.querySelector<HTMLFormElement>('.search');
+    const article = document.querySelector<HTMLElement>('article');
 
-    searchInput.addEventListener('submit', e => {
-      e.preventDefault()
+    if (!searchForm || !article) return;
+
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
 
       try {
         // remove previous highlights, but only inside <article>
-        article.querySelectorAll('mark.highlight').forEach(el => {
-          const parent = el.parentNode
+        article.querySelectorAll('mark.highlight').forEach((el) => {
+          const parent = el.parentNode;
           if (parent) {
-            parent.replaceChild(document.createTextNode(el.textContent), el)
-            parent.normalize()
+            parent.replaceChild(document.createTextNode(el.textContent), el);
+            parent.normalize();
           }
-        })
+        });
 
-        const searchKey = searchInput.q.value.trim()
-        if (!searchKey) return
+        const qEl = searchForm.elements.namedItem('q');
+        if (!(qEl instanceof HTMLInputElement)) {
+          throw new Error('search input "q" not found');
+        }
 
-        const regex = new RegExp('(' + searchKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi')
+        const searchKey = qEl.value.trim();
+        if (!searchKey) return;
+
+        const regex = new RegExp(
+          '(' + searchKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')',
+          'gi'
+        );
 
         // search only the <article> subtree
         const search = (node: Node) => {
           if (node.nodeType === Node.TEXT_NODE) {
-            const textNode = node as ChildNode
+            const textNode = node as ChildNode;
             if (textNode.nodeValue && regex.test(textNode.nodeValue)) {
-              const span = document.createElement('span')
-              span.innerHTML = textNode.nodeValue.replace(regex, '<mark class="highlight">$1</mark>')
+              const span = document.createElement('span');
+              span.innerHTML = textNode.nodeValue.replace(
+                regex,
+                '<mark class="highlight">$1</mark>'
+              );
               // replace text node with the new nodes
-              textNode.replaceWith(...Array.from(span.childNodes))
+              textNode.replaceWith(...Array.from(span.childNodes));
             }
           } else if (
             node instanceof Element &&
@@ -47,16 +63,16 @@ export const initSearch = () => {
           ) {
             // use a static array so live updates don't affect iteration
             // (node.childNodes is a live NodeList)
-            Array.from(node.childNodes).forEach(search)
+            Array.from(node.childNodes).forEach(search);
           }
-        }
+        };
 
-        search(article)
+        search(article);
       } catch (err) {
-        showError('Search failed. Please try again.')
+        showError(toErrorMessage(err) || 'Search failed. Please try again.');
       }
-    })
+    });
   } catch (err) {
-    showError('Search could not be initialized.')
+    showError(toErrorMessage(err) || 'Search could not be initialized.');
   }
-}
+};

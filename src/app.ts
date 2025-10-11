@@ -2,24 +2,24 @@
 // Imports
 // =========================
 
-import { initBears } from '@/bears/bears'
-import { initComments } from '@/comments'
-import { initSearch } from '@/search'
+import { initBears } from '@/bears/bears';
+import { initComments } from '@/comments';
+import { initSearch } from '@/search';
 
 // -------------------------
 // Search
 // -------------------------
 
-initSearch()
+initSearch();
 
 // -------------------------
 // Comments
 // -------------------------
 
-initComments()
+initComments();
 
 // -------------------------
 // Bears
 // -------------------------
 
-initBears()
+void initBears();

@@ -36,7 +36,7 @@ export const initSearch = () => {
               const span = document.createElement('span')
               span.innerHTML = textNode.nodeValue.replace(regex, '<mark class="highlight">$1</mark>')
               // replace text node with the new nodes
-              textNode.replaceWith(...span.childNodes)
+              textNode.replaceWith(...Array.from(span.childNodes))
             }
           } else if (
             node instanceof Element &&

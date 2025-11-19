@@ -230,10 +230,32 @@ Additionally, refactor your project by encapsulating the comments section into a
 
 * (6) Create a web component for the "Add comment" section. Use te shadow DOM and <code>template</code> syntax to encapsulate all related styles inside the component. 
 
+### Findings
 
-> 
-> _Present your findings here..._
->
+**Verwendetes Tool**
+
+Für die Überprüfung der Farbkontraste habe ich die **WAVE Chrome Extension** verwendet.
+
+---
+
+#### Ausgangssituation 
+
+Beim ersten Durchlauf mit WAVE wurden **44 Contrast Errors** gemeldet.  
+Die Hauptursachen ließen sich direkt aus dem ursprünglichen CSS ablesen:
+
+- `html { font-size: 10px; background-color: #dde; }`  
+  - Sehr heller Seitenhintergrund (`#dde`) mit teilweise weißem Text, z.B. beim großen Titel (`font[size="7"] { color: white; text-shadow: ... }`).  
+  - Weiß auf fast weißem Hintergrund hatte einen sehr niedrigen Kontrast.
+- Inhaltsbereiche (`article`, `footer`, `.secondary`) und Navigation (`div[class="nav"]`) hatten einen **grünen Hintergrund** (`background-color: green;`), während der Fließtext in diesen Bereichen **dunkelgrau** gesetzt war (`color: #2a2a2a;` bei `p, input, li, table, label`).  
+  - Dunkelgrau auf Grün war für normalen Text deutlich unter dem WCAG-2.2-Grenzwert.
+- Tabelle:
+  - `table { background-color: #dde; }` und `tbody tr:nth-child(odd) { background-color: #def; }` mit demselben dunkelgrauen Text.  
+  - Die Kontraste waren teilweise grenzwertig und wurden von WAVE ebenfalls bemängelt.
+- Fehlermeldungen:
+  - `background: #da4f49; color: white;`  
+  - Das kräftige Rot in Kombination mit Weiß lag knapp unter dem empfohlenen Kontrastwert für normalen Text.
+
+In Summe führte die Kombination aus **hellen Hintergründen, grauem Text und weißem Titeltext** zu den 44 gemeldeten Kontrastfehlern.
  
 
 ## 4. Migrate to a Frontend Framework

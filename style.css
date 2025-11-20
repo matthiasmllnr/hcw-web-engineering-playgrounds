@@ -48,26 +48,28 @@ body {
    3. Typography
    ========================================================================== */
 
-font[size='7'],
-font[size='6'],
-font[size='5'] {
+h1,
+h2,
+h3 {
   font-family: 'Sonsie One', cursive;
+  margin: 0;
 }
 
-font[size='7'] {
+/* h1 => replaces font[size="7"] */
+h1 {
   font-size: 3rem;
-  text-align: center;
   color: white;
   text-shadow: none;
 }
 
-font[size='6'] {
+/* h2 => replaces font[size="6"] */
+h2 {
   font-size: 2rem;
-  text-align: center;
   color: var(--color-main-text);
 }
 
-font[size='5'] {
+/* h3 => replaces font[size="5"] */
+h3 {
   font-size: 1.2rem;
   color: var(--color-main-text);
 }
@@ -119,7 +121,7 @@ input:focus-visible {
    5. Header / Navigation Layout
    ========================================================================== */
 
-div[class='nav'],
+nav[class='nav'],
 article,
 footer,
 .secondary {
@@ -138,7 +140,7 @@ article {
 
 /* Navigation bar */
 
-div[class='nav'] {
+nav[class='nav'] {
   height: 50px;
   background-color: var(--color-nav-bg);
   display: flex;
@@ -146,7 +148,7 @@ div[class='nav'] {
   margin-bottom: 10px;
 }
 
-div[class='nav'] ul {
+nav[class='nav'] ul {
   padding: 0;
   margin: 0;
   list-style-type: none;
@@ -154,13 +156,13 @@ div[class='nav'] ul {
   display: flex;
 }
 
-div[class='nav'] li {
+nav[class='nav'] li {
   display: inline;
   text-align: center;
   flex: 1;
 }
 
-div[class='nav'] a {
+nav[class='nav'] a {
   display: inline-block;
   font-size: 2rem;
   text-transform: uppercase;
@@ -170,12 +172,23 @@ div[class='nav'] a {
 
 /* Search block in nav */
 
-div[class='nav'] .search {
+nav[class='nav'] .search {
   flex: 1;
   display: flex;
   align-items: center;
   height: 100%;
   padding: 0 2em;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
 .search input {

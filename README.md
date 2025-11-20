@@ -232,30 +232,121 @@ Additionally, refactor your project by encapsulating the comments section into a
 
 ### Findings
 
-**Verwendetes Tool**
+#### **Tool Used**
 
-Für die Überprüfung der Farbkontraste habe ich die **WAVE Chrome Extension** verwendet.
+I used the **WAVE Chrome Extension** to evaluate the color contrast of the page.
 
 ---
 
-#### Ausgangssituation 
+#### **Color**
 
-Beim ersten Durchlauf mit WAVE wurden **44 Contrast Errors** gemeldet.  
-Die Hauptursachen ließen sich direkt aus dem ursprünglichen CSS ablesen:
+**Initial Situation**
+
+During the first WAVE analysis, the tool reported **44 contrast errors**.  
+The main causes were clearly visible in the original CSS:
 
 - `html { font-size: 10px; background-color: #dde; }`  
-  - Sehr heller Seitenhintergrund (`#dde`) mit teilweise weißem Text, z.B. beim großen Titel (`font[size="7"] { color: white; text-shadow: ... }`).  
-  - Weiß auf fast weißem Hintergrund hatte einen sehr niedrigen Kontrast.
-- Inhaltsbereiche (`article`, `footer`, `.secondary`) und Navigation (`div[class="nav"]`) hatten einen **grünen Hintergrund** (`background-color: green;`), während der Fließtext in diesen Bereichen **dunkelgrau** gesetzt war (`color: #2a2a2a;` bei `p, input, li, table, label`).  
-  - Dunkelgrau auf Grün war für normalen Text deutlich unter dem WCAG-2.2-Grenzwert.
-- Tabelle:
-  - `table { background-color: #dde; }` und `tbody tr:nth-child(odd) { background-color: #def; }` mit demselben dunkelgrauen Text.  
-  - Die Kontraste waren teilweise grenzwertig und wurden von WAVE ebenfalls bemängelt.
-- Fehlermeldungen:
-  - `background: #da4f49; color: white;`  
-  - Das kräftige Rot in Kombination mit Weiß lag knapp unter dem empfohlenen Kontrastwert für normalen Text.
+  - The page used a very light background color (`#dde`) together with white text in several places, such as the main title (`font[size="7"] { color: white; text-shadow: ... }`).  
+  - White text on a light pastel background resulted in extremely low contrast.
 
-In Summe führte die Kombination aus **hellen Hintergründen, grauem Text und weißem Titeltext** zu den 44 gemeldeten Kontrastfehlern.
+- Content areas (`article`, `footer`, `.secondary`) and the navigation (`div[class="nav"]`) all had a **pure green background** (`background-color: green;`), while the body text in these regions was styled in **dark grey** (`color: #2a2a2a` on `p, input, li, table, label`).  
+  - Dark grey on green did **not** meet the WCAG 2.2 contrast requirement of at least 4.5:1 for normal text.
+
+- Table styling:
+  - `table { background-color: #dde; }` combined with `tbody tr:nth-child(odd) { background-color: #def; }`, again using dark grey text.  
+  - These combinations provided insufficient contrast and were flagged by WAVE.
+
+- Error messages:
+  - `background: #da4f49; color: white;`  
+  - While visually striking, white text on this saturated red background did not fully reach the recommended WCAG contrast threshold for body text.
+
+Overall, the combination of **very light backgrounds, grey text, and white headings** resulted in the 44 contrast errors identified by WAVE.
+
+---
+
+#### **Semantic HTML**
+
+**Initial Situation**
+
+By examining the HTML structure and simulating how a screen reader would interpret the page, several accessibility issues become clear:
+
+- The page uses `<main>`, `<article>`, `<aside>`, and `<footer>`, but:
+  - The page header is just `<div class="header">` instead of a semantic `<header>`.
+  - The navigation is a `<div class="nav">` instead of a `<nav>` landmark.
+  - The `<html>` element does not include a `lang` attribute, so the screen reader does not know which language to use.
+- All visual “headings” are implemented using `<font size="...">` instead of semantic heading elements (`<h1>–<h6>`).
+  - This means the page has **no heading structure at all** from a screen reader’s perspective.
+  - Users cannot use heading-based navigation (e.g., pressing H, 1, 2, 3) to jump through the content.
+- The search input in the navigation has no label, only a placeholder.
+  - Screen readers read placeholders inconsistently, and placeholders are not reliable labels.
+  - As a result, the search form is not clearly announced as a site search.
+- The data table uses `<td>` inside the `<thead>` instead of `<th scope="col">`.
+  - Without column headers, screen readers cannot announce “Bear Type: Wild” — they only read the cell content without context.
+  - There is also no `<caption>`, so there is no summary explaining what the table represents.
+- The `<comments-section>` Web Component has no surrounding section or heading in the host HTML, so it appears as an unlabelled region.
+- Several content sections (“The trouble with Bears”, “Types of bear”, “Habitats”, “Mating rituals”, “More Bears”, “Related”) are visually styled as headings but are not actual headings in the semantic structure.
+
+**Impact on Screen Reader Users**
+
+When navigating the page with a screen reader:
+
+- The user hears no clear page landmarks beyond “main” and “contentinfo”.
+- The page contains **no headings**, so navigation becomes strictly linear and slow.
+- The table is difficult to understand because data cells do not announce their column headers.
+- The search form is not properly announced or labeled.
+- The comments area and related content are not identifiable as distinct regions.
+- The user must rely on reading everything in order, making the page significantly harder to navigate and understand.
+
+---
+
+### Improvements Implemented
+
+To fix these issues, I applied several structural and semantic upgrades:
+
+1. **Proper Landmarks & Language**
+   - Added `lang="en"` to the `<html>` element.
+   - Converted structural `<div>` elements into semantic elements:
+     - `<header>` for the page header.
+     - `<nav aria-label="Main navigation">` for the navigation bar.
+   - These changes give screen readers meaningful landmarks such as “Banner”, “Navigation”, “Main”, and “Contentinfo”.
+
+2. **Semantic Heading Structure**
+   - Replaced all `<font>`-based headings with semantic headings:
+     - `<h1>` for the page title.
+     - `<h2>` for top-level content sections.
+     - `<h3>` for subtopics such as “Types of bear”, “Habitats”, “Mating rituals”, etc.
+   - This creates a proper heading hierarchy and enables fast navigation via screen reader shortcuts.
+
+3. **Accessible Search Form**
+   - Added a proper label to the search input (screen-reader only).
+   - Added `role="search"` and an `aria-label` for the search form.
+   - This allows the screen reader to announce the form as a search region and gives the input a reliable accessible name.
+
+4. **Accessible Table Structure**
+   - Replaced `<td>` elements in the table header with:
+     ```html
+     <th scope="col">...</th>
+     ```
+   - Added a `<caption>` describing the table.
+   - These changes enable the screen reader to announce each cell together with its column header.
+
+5. **Labelled Sections**
+   - Wrapped the comments section in a `<section aria-label="Comments">` with a proper heading.
+   - Converted the “Related” sidebar into:
+     ```html
+     <aside aria-label="Related articles">...</aside>
+     ```
+   - This makes both areas discoverable using landmark navigation and understandable in context.
+
+**Result**
+
+With these semantic changes:
+
+- The page now exposes a clear structure of headings and landmarks.
+- Screen reader users can navigate via headings, regions, and search role.
+- The table becomes fully understandable when navigating cell-by-cell.
+- Each section is identifiable and labeled correctly.
+- The overall browsing experience becomes significantly more efficient, predictable, and accessible.
  
 
 ## 4. Migrate to a Frontend Framework

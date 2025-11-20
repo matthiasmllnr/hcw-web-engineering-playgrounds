@@ -24,18 +24,14 @@ export class CommentsSection extends HTMLElement {
 
   connectedCallback(): void {
     try {
-      // Build template
       const templateEl = document.createElement('template');
       templateEl.innerHTML = templateHtml;
 
-      // Inject <style> scoped to shadow
       const styleEl = document.createElement('style');
       styleEl.textContent = styles;
 
-      // Attach to shadow DOM
       this.root.append(styleEl, templateEl.content.cloneNode(true));
 
-      // Init
       this.initToggleBtn();
       this.initSubmitBtn();
       this.initForm();
@@ -46,104 +42,120 @@ export class CommentsSection extends HTMLElement {
     }
   }
 
-  // =========================
-  // Private
-  // =========================
+  // ==========================================================================
+  // Show / Hide comments button
+  // ==========================================================================
 
   private initToggleBtn(): void {
     const showHideBtn =
       this.root.querySelector<HTMLButtonElement>('.show-hide');
+
     const commentWrapper =
-      this.root.querySelector<HTMLDivElement>('.comment-wrapper');
+      this.root.querySelector<HTMLDivElement>('#comment-wrapper');
 
     if (!showHideBtn || !commentWrapper) {
-      console.error(
-        '[comments-section] (initToggleBtn) Required fields are missing!'
-      );
+      console.error('[comments-section] Missing toggle or wrapper element.');
       return;
     }
 
+    // Start hidden
     commentWrapper.style.display = 'none';
+    showHideBtn.setAttribute('aria-expanded', 'false');
 
-    showHideBtn.onclick = () => {
-      const showHideText = showHideBtn.textContent;
-      if (showHideText === 'Show comments') {
-        showHideBtn.textContent = 'Hide comments';
-        commentWrapper.style.display = 'block';
-      } else {
+    showHideBtn.addEventListener('click', () => {
+      const isExpanded = showHideBtn.getAttribute('aria-expanded') === 'true';
+
+      if (isExpanded) {
+        // Hide
         showHideBtn.textContent = 'Show comments';
+        showHideBtn.setAttribute('aria-expanded', 'false');
         commentWrapper.style.display = 'none';
+      } else {
+        // Show
+        showHideBtn.textContent = 'Hide comments';
+        showHideBtn.setAttribute('aria-expanded', 'true');
+        commentWrapper.style.display = 'block';
       }
-    };
+    });
   }
 
+  // ==========================================================================
+  // Enable submit button only when both fields are filled
+  // ==========================================================================
+
   private initSubmitBtn(): void {
-    const nameField = this.root.querySelector<HTMLInputElement>('#name');
-    const commentField = this.root.querySelector<HTMLInputElement>('#comment');
+    const nameField =
+      this.root.querySelector<HTMLInputElement>('#comment-name');
+
+    const commentField =
+      this.root.querySelector<HTMLInputElement>('#comment-text');
+
     const submitBtn =
       this.root.querySelector<HTMLButtonElement>('#submit-comment');
 
     if (!nameField || !commentField || !submitBtn) {
-      console.error(
-        '[comments-section] (initSubmitBtn) Required fields are missing!'
-      );
+      console.error('[comments-section] Missing form fields.');
       return;
     }
 
     const toggleSubmit = (): void => {
-      const nameIsPresent = nameField.value.trim().length > 0;
-      const commentIsPresent = commentField.value.trim().length > 0;
-      submitBtn.disabled = !(nameIsPresent && commentIsPresent);
+      const validName = nameField.value.trim().length > 0;
+      const validComment = commentField.value.trim().length > 0;
+      submitBtn.disabled = !(validName && validComment);
     };
 
-    // run once at startup
+    // Initial state
     toggleSubmit();
 
-    // check on every keystroke
+    // Live validation
     nameField.addEventListener('input', toggleSubmit);
     commentField.addEventListener('input', toggleSubmit);
   }
 
+  // ==========================================================================
+  // Form submission logic
+  // ==========================================================================
+
   private initForm(): void {
     const form = this.root.querySelector<HTMLFormElement>('.comment-form');
-    const nameField = this.root.querySelector<HTMLInputElement>('#name');
-    const commentField = this.root.querySelector<HTMLInputElement>('#comment');
+    const nameField =
+      this.root.querySelector<HTMLInputElement>('#comment-name');
+    const commentField =
+      this.root.querySelector<HTMLInputElement>('#comment-text');
     const list =
       this.root.querySelector<HTMLUListElement>('.comment-container');
 
     if (!form || !nameField || !commentField || !list) {
-      console.error(
-        '[comments-section] (initForm) Required fields are missing!'
-      );
+      console.error('[comments-section] Missing form or fields.');
       return;
     }
 
-    form.onsubmit = (e: SubmitEvent) => {
+    form.addEventListener('submit', (e: SubmitEvent) => {
       e.preventDefault();
 
       try {
-        const listItem = document.createElement('li');
-        const namePara = document.createElement('p');
-        const commentPara = document.createElement('p');
-        const nameValue = nameField.value;
-        const commentValue = commentField.value;
+        const nameValue = nameField.value.trim();
+        const commentValue = commentField.value.trim();
 
         if (!nameValue || !commentValue) {
           showError('Please enter your name and a comment.');
           return;
         }
 
+        const listItem = document.createElement('li');
+        const namePara = document.createElement('p');
+        const commentPara = document.createElement('p');
+
         namePara.textContent = nameValue;
         commentPara.textContent = commentValue;
 
+        listItem.append(namePara, commentPara);
         list.appendChild(listItem);
-        listItem.appendChild(namePara);
-        listItem.appendChild(commentPara);
 
+        // Reset
         nameField.value = '';
         commentField.value = '';
 
-        // Re-disable submit after reset
         const submitBtn =
           this.root.querySelector<HTMLButtonElement>('#submit-comment');
         if (submitBtn) submitBtn.disabled = true;
@@ -152,7 +164,7 @@ export class CommentsSection extends HTMLElement {
           toErrorMessage(err) || 'Could not add your comment. Please try again.'
         );
       }
-    };
+    });
   }
 }
 

@@ -1,38 +1,47 @@
-<section class="comments">
-  <div class="show-hide">Show comments</div>
+<section class="comments" aria-label="Comments">
+  <button
+    class="show-hide"
+    type="button"
+    aria-expanded="false"
+    aria-controls="comment-wrapper"
+  >
+    Show comments
+  </button>
 
-  <div class="comment-wrapper">
-    <font size="6">Add comment</font>
-    <form class="comment-form">
+  <div class="comment-wrapper" id="comment-wrapper">
+    <h2>Add comment</h2>
+
+    <form class="comment-form" aria-label="Add comment">
       <div class="flex-pair">
-        Your name:
+        <label for="comment-name">Your name:</label>
         <input
           type="text"
           name="name"
-          id="name"
+          id="comment-name"
           placeholder="Enter your name"
         />
       </div>
+
       <div class="flex-pair">
-        Your comment:
+        <label for="comment-text">Your comment:</label>
         <input
           type="text"
           name="comment"
-          id="comment"
+          id="comment-text"
           placeholder="Enter your comment"
         />
+        <!-- If you prefer, you can change this to a <textarea> without changing the TS logic -->
       </div>
-      <div>
-        <input
-          id="submit-comment"
-          type="submit"
-          value="Submit comment"
-          disabled
-        />
+
+      <div class="submit-row">
+        <button id="submit-comment" type="submit" disabled>
+          Submit comment
+        </button>
       </div>
     </form>
 
-    <font size="6">Comments</font>
+    <h2>Comments</h2>
+
     <ul class="comment-container">
       <li>
         <p>Bob Fossil</p>

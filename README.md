@@ -347,7 +347,44 @@ With these semantic changes:
 - The table becomes fully understandable when navigating cell-by-cell.
 - Each section is identifiable and labeled correctly.
 - The overall browsing experience becomes significantly more efficient, predictable, and accessible.
- 
+
+---
+
+#### **Audio**
+
+The audio element on the page is not an actual recording of bear behaviour.  
+Instead, the file contains a spoken placeholder sentence instructing the student to create a transcript.
+
+This means that hearing-impaired users would receive no information without an accessible alternative. To fix this, I wrapped the audio in a `<figure>` with a `<figcaption>` and added a transcript using a `<details>` element.
+
+---
+
+#### **Forms** – Search input 
+
+The search field in the navigation originally only had a placeholder and no `<label>`, so screen readers did not have a reliable accessible name. I fixed this by adding a visually hidden label (`<label class="sr-only" for="search-input">Search this site</label>`) and keeping the design unchanged for sighted users. The `.sr-only` helper hides the label visually but keeps it fully available to assistive technologies.
+
+#### **Forms** – Comment form labels
+
+In the comment form, the visible texts “Your name:” and “Your comment:” were not programmatically associated with their inputs, so screen readers treated the fields as unlabeled. I fixed this by adding explicit `<label for="comment-name">…</label>` and `<label for="comment-text">…</label>` elements and matching `id` attributes on the inputs. The CSS was updated to style these labels and inputs in a two-column layout without changing the overall visual design.
+
+---
+
+#### **Table**
+
+The original bear data table used only `<td>` cells in the header row and had no summary text, which made it hard for screen reader users to understand the structure and purpose of the table. To fix this, I:
+
+- Added a **`<caption>`** describing the table:  
+  `Bear types and their main characteristics`
+- Converted the header cells to **`<th scope="col">`** so screen readers can correctly associate each data cell with its column header.
+- Kept the body rows as `<tbody><tr><td>…</td></tr></tbody>`, so users now hear announcements like “Bear Type: Wild” instead of just “Wild”.
+
+---
+
+#### **Comment Section**
+
+The show/hide control for the comments was originally a non-interactive `<div>`, which was not focusable via Tab and could not be activated with the keyboard. I replaced it with a native `<button class="show-hide" type="button">` and added `aria-expanded` and `aria-controls`, updating these attributes dynamically in the toggle logic. This makes the control fully keyboard-accessible (Tab focus + Enter/Space activation) and exposes its expanded/collapsed state to assistive technologies.
+
+I had already created the comment section as a **Web Component** earlier in the playground before, and for this assignment I enhanced it further to meet all accessibility requirements - including proper labels, improved structure, and a fully accessible show/hide button.
 
 ## 4. Migrate to a Frontend Framework
 In this playground you will migrate your application to a frontend framework of your choice.

@@ -16,6 +16,11 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./gui
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,7 +28,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -41,7 +46,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: gui/dist/playground-gui/browser
 
   deploy:
     needs: build

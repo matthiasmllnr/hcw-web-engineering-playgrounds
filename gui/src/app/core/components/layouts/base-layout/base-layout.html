@@ -1,0 +1,38 @@
+<nz-layout [ngStyle]="{ height: elHeight(), 'max-height': elHeight() }">
+  <nz-header>
+    <div class="app-header">
+      <div class="logo">
+        <img src="/bear_logo.png" alt="Bear Logo" />
+      </div>
+      <ul nz-menu nzTheme="dark" nzMode="horizontal">
+        @for (menuItem of menuItems; track menuItem) {
+          <li nz-menu-item nzMatchRouter>
+            <a [routerLink]="menuItem.routerLink">
+              {{ menuItem.title }}
+            </a>
+          </li>
+        }
+      </ul>
+
+      <div class="search-div">
+        <form nz-form class="search" aria-label="Search in article" (ngSubmit)="onSearch(value)">
+          <nz-input-search nzAllowClear nzEnterButton (nzSearch)="onSearch(value)">
+            <input
+              nz-input
+              [(ngModel)]="value"
+              name="q"
+              placeholder="Search in article…"
+              aria-label="Search in article content"
+            />
+          </nz-input-search>
+        </form>
+      </div>
+    </div>
+  </nz-header>
+  <nz-content>
+    <div class="inner-content">
+      <ng-content />
+    </div>
+  </nz-content>
+  <nz-footer>© {{ date.getFullYear() }} by nobody. All rights reversed.</nz-footer>
+</nz-layout>

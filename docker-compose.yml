@@ -1,0 +1,13 @@
+services:
+  playgrounds-gui:
+    container_name: playgrounds-gui
+    build:
+      context: './gui'
+      dockerfile: 'image/Dockerfile-dev'
+    volumes:
+      - ./gui:/home/app/
+    ports:
+      - '4200:4200'
+    stdin_open: true
+    tty: true  
+    restart: unless-stopped

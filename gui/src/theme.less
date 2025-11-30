@@ -1,0 +1,33 @@
+// Custom Theming for NG-ZORRO
+// For more information: https://ng.ant.design/docs/customize-theme/en
+@import '../node_modules/ng-zorro-antd/ng-zorro-antd.less';
+
+// Override less variables to here
+// View all variables: https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/components/style/themes/default.less
+
+@primary-color-light: #239451;
+@primary-color-dark: #1e8145;
+
+@primary-color: @primary-color-light;
+
+@layout-header-background: @primary-color-light;
+
+@border-color-light: #f2f2f2;
+@border-color-dark: #e1e1e1;
+@border-color: @border-color-light;
+
+:root {
+  // Add more variables as needed
+  --primary-color-light: @primary-color-light;
+  --primary-color-dark: @primary-color-dark;
+
+  --layout-header-background: @layout-header-background;
+  --primary-color: @primary-color;
+  --primary-color-light: @primary-color-light;
+  --primary-color-dark: @primary-color-dark;
+
+  --border-color-light: @border-color-light;
+  --border-color-dark: @border-color-dark;
+  --border-color: @border-color;
+}
+

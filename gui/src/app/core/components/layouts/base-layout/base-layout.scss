@@ -1,0 +1,70 @@
+:host {
+  display: flex;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app-header {
+  position: relative;
+  height: 64px;
+  padding: 0;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  // the following is for making sure the route title is displayed with an ellipsis
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+
+  .logo {
+    height: 50px;
+    margin: 16px 24px 16px 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      height: 100%;
+    }
+  }
+}
+
+[nz-menu] {
+  line-height: 64px;
+
+  [nz-menu-item] {
+    color: black;
+
+    ::ng-deep .ant-menu-title-content {
+
+      font-size: 1.2rem;
+      text-transform: uppercase;
+
+      a {
+        color: black;
+      }
+    }
+  }
+}
+
+nz-content {
+  padding: 25px 25px 0px 25px;
+}
+
+nz-footer {
+  text-align: center;
+}
+
+
+.inner-content {
+  padding: 12px 14px;
+  background: var(--bs-white);
+  min-height: 280px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.search-div {
+  margin-left: auto;
+}

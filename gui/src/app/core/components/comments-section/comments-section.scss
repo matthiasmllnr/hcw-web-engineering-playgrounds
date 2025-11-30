@@ -1,0 +1,65 @@
+.comments-section {
+  margin-top: 16px;
+
+  .show-hide {
+    margin-bottom: 16px;
+  }
+
+  .comment-wrapper {
+    padding: 16px 0;
+  }
+
+  h2 {
+    margin-top: 24px;
+    margin-bottom: 12px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .flex-pair {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    nz-form-label {
+      min-width: 130px;
+      padding: 0;
+    }
+
+    nz-form-control {
+      flex: 1;
+    }
+  }
+
+  .submit-row {
+    margin-top: 16px;
+  }
+
+  /* Comment list */
+
+  .comment-container {
+    margin-top: 16px;
+
+    nz-list-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .comment-author {
+      font-weight: 600;
+      margin: 0 0 4px 0;
+    }
+
+    .comment-text {
+      margin: 0;
+      color: #555;
+      line-height: 1.4;
+    }
+  }
+}

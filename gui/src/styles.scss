@@ -1,0 +1,39 @@
+/* You can add global styles to this file, and also import other style files */
+
+$scrollbar-color: var(--primary-color-dark);
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  /* makes scrollbar slimmer */
+  scrollbar-color: $scrollbar-color #f0f0f000;
+  /* thumb / track */
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+  /* scrollbar thickness */
+  height: 8px;
+  /* horizontal scrollbar */
+}
+
+*::-webkit-scrollbar-track {
+  background: #f0f0f000;
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: $scrollbar-color;
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: $scrollbar-color;
+}
+
+mark.highlight {
+  background-color: #ffe58f;
+  padding: 0 2px;
+  border-radius: 2px;
+}

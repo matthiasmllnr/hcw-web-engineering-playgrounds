@@ -1,0 +1,145 @@
+<nz-row nzGutter="24">
+  <!-- Main article -->
+  <nz-col nzSpan="18">
+    <nz-card nzBordered="false">
+      <main>
+        <h1 nz-typography>Welcome to our wildlife website</h1>
+
+        <article #articleRoot aria-labelledby="article-title">
+          <!-- Introduction -->
+          <h2 id="article-title" nz-typography>The trouble with Bears</h2>
+          <p nz-typography>By Evan Wild</p>
+
+          <p nz-typography>
+            Tall, lumbering, angry, dangerous. The real live bears of this world are proud,
+            independent creatures, self-serving and always on the hunt for food.
+          </p>
+
+          <nz-divider />
+
+          <h3 nz-typography>Types of bear</h3>
+
+          <!-- Bear Table -->
+          <nz-table
+            #bearTable
+            [nzData]="bears"
+            nzTableLayout="fixed"
+            class="bear-table"
+            [nzShowPagination]="false"
+          >
+            <caption nz-typography>
+              Bear types and their main characteristics
+            </caption>
+
+            <thead>
+              <tr>
+                <th scope="col">Bear Type</th>
+                <th scope="col">Coat</th>
+                <th scope="col">Adult size</th>
+                <th scope="col">Habitat</th>
+                <th scope="col">Lifespan</th>
+                <th scope="col">Diet</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (bear of bearTable.data; track bear) {
+                <tr>
+                  <td>{{ bear.type }}</td>
+                  <td>{{ bear.coat }}</td>
+                  <td>{{ bear.size }}</td>
+                  <td>{{ bear.habitat }}</td>
+                  <td>{{ bear.lifespan }}</td>
+                  <td>{{ bear.diet }}</td>
+                </tr>
+              }
+            </tbody>
+          </nz-table>
+
+          <nz-divider />
+
+          <!-- Habitats and Eating habits -->
+          <h3 nz-typography>Habitats and Eating habits</h3>
+
+          <p nz-typography>
+            Wild bears eat a variety of meat, fish, fruit, nuts, and other naturally growing
+            ingredients...
+          </p>
+
+          <img class="mb-4" nz-image nzSrc="media/wild-bear.jpg" alt="Wild bear in forest" />
+
+          <p nz-typography>
+            Urban (gentrified) bears on the other hand have largely abandoned the old ways...
+          </p>
+
+          <img nz-image nzSrc="media/urban-bear.jpg" alt="Urban bear near buildings" />
+
+          <nz-divider />
+
+          <!-- Mating rituals -->
+          <h3 nz-typography>Mating rituals</h3>
+
+          <p nz-typography>Bears are romantic creatures by nature...</p>
+
+          <figure>
+            <figcaption nz-typography>Bear mating rituals - audio description</figcaption>
+
+            <audio controls>
+              <source src="media/bear.mp3" type="audio/mp3" />
+              <source src="media/bear.ogg" type="audio/ogg" />
+              <p>It looks like your browser doesn't support HTML5 audio players.</p>
+            </audio>
+
+            <details class="audio-transcript">
+              <summary>Read transcript of the audio</summary>
+              <p>
+                This audio does not contain actual bear mating sounds. It is simply a placeholder
+                audio file used for demonstration purposes. The spoken message says:
+                <strong>
+                  “This isnt really an audio fact file about bears but it is an audio file you can
+                  transcribe.”
+                </strong>
+              </p>
+            </details>
+          </figure>
+
+          <nz-divider />
+
+          <!-- About the Author -->
+          <aside aria-label="About the author">
+            <h3 nz-typography>About the author</h3>
+            <p nz-typography>Evan Wild is an unemployed plumber from Doncaster...</p>
+          </aside>
+
+          <nz-divider />
+
+          <!-- Comments -->
+          <section aria-label="Comments">
+            <h2 nz-typography>Comments</h2>
+            <app-comments-section></app-comments-section>
+          </section>
+
+          <nz-divider />
+
+          <!-- More Bears -->
+          <section class="more_bears" aria-label="More bears">
+            <app-more-bears />
+          </section>
+        </article>
+      </main>
+    </nz-card>
+  </nz-col>
+
+  <!-- Secondary / related articles -->
+  <nz-col nzSpan="6">
+    <nz-card nzTitle="Related" class="secondary" aria-label="Related articles">
+      <nz-list>
+        @for (article of relatedArticles; track article) {
+          <nz-list-item>
+            <a href="#" nz-typography [style.color]="'#145f33'">{{ article }}</a>
+          </nz-list-item>
+        }
+      </nz-list>
+    </nz-card>
+  </nz-col>
+</nz-row>

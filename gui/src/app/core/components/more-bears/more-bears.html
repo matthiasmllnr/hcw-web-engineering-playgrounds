@@ -1,0 +1,75 @@
+<section class="more-bears" aria-labelledby="more-bears-title">
+  <nz-card nzBordered="false" class="more-bears-card">
+    <header class="more-bears-header">
+      <div>
+        <h2 id="more-bears-title" nz-typography nzTitle>More bears</h2>
+      </div>
+    </header>
+
+    <nz-spin [nzSpinning]="loading">
+      @if (!error) {
+        @if (bears$ | async; as bears) {
+          @if (bears.length > 0) {
+            <nz-row nzGutter="16" class="bear-grid">
+              @for (bear of bears; track bear.name) {
+                <nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8" [nzLg]="6" class="bear-grid-item">
+                  <nz-card nzHoverable class="bear-card">
+                    <div class="bear-media">
+                      <!-- Bear photo -->
+                      <img
+                        nz-image
+                        class="bear-photo"
+                        [nzSrc]="bear.image"
+                        [alt]="'Image of ' + bear.name"
+                        [style.width.px]="220"
+                      />
+
+                      <!-- Range image -->
+                      <div class="bear-range-wrapper">
+                        @if (bear.rangeImage) {
+                          <img
+                            nz-image
+                            class="bear-range"
+                            [nzSrc]="bear.rangeImage!"
+                            [alt]="'Range: ' + bear.rangeText"
+                            [style.width.px]="120"
+                          />
+                        } @else {
+                          <div class="range-placeholder">
+                            <span nz-typography>Range map not available</span>
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="bear-content">
+                      <p class="bear-name" nz-typography>
+                        <strong>{{ bear.name }}</strong>
+                        <span class="bear-binomial">({{ bear.binomial }})</span>
+                      </p>
+
+                      <p class="bear-range-text" nz-typography>Range: {{ bear.rangeText }}</p>
+                    </div>
+                  </nz-card>
+                </nz-col>
+              }
+            </nz-row>
+          } @else {
+            <div class="state-wrapper">
+              <nz-empty nzDescription="No bears could be loaded."></nz-empty>
+            </div>
+          }
+        }
+      } @else {
+        <div class="state-wrapper">
+          <nz-alert
+            nzType="error"
+            nzShowIcon
+            nzMessage="Error loading bears"
+            [nzDescription]="error"
+          ></nz-alert>
+        </div>
+      }
+    </nz-spin>
+  </nz-card>
+</section>

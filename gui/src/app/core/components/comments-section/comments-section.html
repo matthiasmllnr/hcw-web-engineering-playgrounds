@@ -1,0 +1,82 @@
+<div class="comments-section">
+  <button
+    nz-button
+    class="show-hide"
+    type="button"
+    [attr.aria-expanded]="isExpanded"
+    aria-controls="comment-wrapper"
+    (click)="toggleExpanded()"
+  >
+    {{ toggleLabel }}
+  </button>
+
+  <section
+    class="comment-wrapper"
+    id="comment-wrapper"
+    aria-label="Comments"
+    [hidden]="!isExpanded"
+  >
+    <h4 nz-typography>Add comment</h4>
+
+    <form
+      nz-form
+      class="comment-form"
+      aria-label="Add comment"
+      [formGroup]="commentForm"
+      (ngSubmit)="onSubmit()"
+    >
+      <div nz-form-item class="flex-pair">
+        <div nz-form-label>
+          <label for="comment-name">Your name:</label>
+        </div>
+        <div nz-form-control>
+          <input
+            nz-input
+            type="text"
+            id="comment-name"
+            formControlName="name"
+            placeholder="Enter your name"
+          />
+        </div>
+      </div>
+
+      <div nz-form-item class="flex-pair">
+        <div nz-form-label>
+          <label for="comment-text">Your comment:</label>
+        </div>
+        <div nz-form-control>
+          <input
+            nz-input
+            type="text"
+            id="comment-text"
+            formControlName="comment"
+            placeholder="Enter your comment"
+          />
+        </div>
+      </div>
+
+      <div class="submit-row">
+        <button
+          nz-button
+          nzType="primary"
+          id="submit-comment"
+          type="submit"
+          [disabled]="commentForm.invalid"
+        >
+          Submit comment
+        </button>
+      </div>
+    </form>
+
+    <h4 class="mt-3">Comments</h4>
+
+    <nz-list class="comment-container">
+      @for (comment of comments; track comment) {
+        <nz-list-item>
+          <p class="comment-author">{{ comment.name }}</p>
+          <p class="comment-text">{{ comment.text }}</p>
+        </nz-list-item>
+      }
+    </nz-list>
+  </section>
+</div>

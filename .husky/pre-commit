@@ -1,1 +1,2 @@
+cd gui
 npx lint-staged

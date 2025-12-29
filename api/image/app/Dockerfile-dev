@@ -1,0 +1,101 @@
+FROM ruby:3.4.8-slim
+
+## ===================================
+## Locale / noninteractive setup
+## ===================================
+
+## Make sure tzdata is noninteractive and configure correct timezone and localtime
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Vienna
+
+## ===================================
+## Environtment Variables
+## ===================================
+
+## Env variables to control our image
+ENV APP_USER="app"
+ENV HOME=/home/$APP_USER
+
+## Install bundler gems locally for our user instead of system-wide which requires root user privileges
+ENV BUNDLE_PATH=$HOME/vendor/bundle
+ENV BUNDLE_BIN=$HOME/vendor/bundle/bin
+ENV GEM_HOME=$HOME/vendor/bundle
+ENV PATH=$HOME/vendor/bundle/bin:$PATH
+
+## ===================================
+## System Packages
+## ===================================
+
+## Install system packages
+RUN apt-get update -qq && \
+  apt-get install -y --no-install-recommends \
+  build-essential \
+  libpq-dev \
+  tzdata \
+  pkg-config \
+  nodejs \
+  vim \
+  procps \
+  git \
+  tini \
+  curl \
+  ca-certificates \
+  libyaml-dev \
+  imagemagick \
+  file \
+  less \
+  postgresql-client && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+## ===================================
+## APP User * Home Directory
+## ===================================
+
+RUN groupadd --system --gid 1000 $APP_USER && \
+  useradd $APP_USER --uid 1000 --gid 1000 --create-home --shell /bin/bash
+
+## Set home directory
+WORKDIR $HOME
+
+## ===================================
+## Bundle install 
+## using Gemfile* only (cache-friendly)
+## ===================================
+
+COPY Gemfile Gemfile.lock ./
+
+RUN gem install bundler --no-document -v 2.6.9 && \
+  gem update --system 3.6.8 && \
+  bundle config set path "$BUNDLE_PATH" && \
+  bundle install
+
+## ===================================
+## Use APP User
+## (Note: bundle content was installed as root; that’s intentional here)
+## ===================================
+
+USER $APP_USER:$APP_USER
+
+## ===================================
+## Make 'rails' available on PATH
+## ===================================
+
+ENV PATH="/usr/local/bin/ruby:${PATH}"
+
+## ===================================
+## COPY server-start-dev.sh
+## (RAILS_DEV_ONLY_BOOT_PUMA_SERVER)
+## ===================================
+
+COPY image/app/scripts/server-start-dev.sh /usr/local/bin
+
+## ===================================
+## Entrypoint (init-dev.sh)
+## ===================================
+
+## Tini is the simplest init you could think of.
+## All Tini does is spawn a single child (Tini is meant to be run in a container), and wait for it to exit all the while reaping zombies and performing signal forwarding.
+## The process with PID 1 has to properly forward signals like SIGTERM and SIGINT for graceful shutdowns and it should reap zombie child processes. Which tini does!
+ENTRYPOINT ["/usr/bin/tini", "--", "/bin/bash", "/home/app/image/app/entrypoint/init-dev.sh"]
+

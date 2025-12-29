@@ -11,3 +11,27 @@ services:
     stdin_open: true
     tty: true  
     restart: unless-stopped
+
+  playgrounds-api:
+    container_name: playgrounds-api
+    build:
+      context: './api'
+      dockerfile: 'image/app/Dockerfile-dev'
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./api:/home/app
+    environment:
+      RAILS_ENV: 'development'
+      RAILS_PORT: 3000
+
+      RAILS_FRONTEND_URL: 'http://localhost:4200'
+
+      ## Other
+      WEB_CONCURRENCY: 1
+
+      ## Change freely
+      RAILS_DEV_ONLY_BOOT_PUMA_SERVER: 'false'
+    restart: unless-stopped
+    stdin_open: true
+    tty: true

@@ -1,0 +1,36 @@
+services:
+  playgrounds-gui:
+    container_name: playgrounds-gui
+    build:
+      context: './gui'
+      dockerfile: 'image/Dockerfile'
+      target: production
+    ports:
+      - '8080:80'
+    stdin_open: true
+    tty: true  
+    restart: unless-stopped
+
+  playgrounds-api:
+    build:
+      context: ./api
+      dockerfile: image/app/Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: "production"
+      RAILS_PORT: 3000
+
+      RAILS_FRONTEND_URL: "http://localhost:8080"
+
+      ## NOTE:
+      ## For this university project, SECRET_KEY_BASE is defined directly in the
+      ## docker-compose file for simplicity and reproducibility.
+      ## In a real production setup, this value MUST NOT be committed to version control
+      ## and would instead be provided via environment variables, .env files, or a
+      ## secrets management solution (e.g. Docker secrets, Kubernetes secrets, Vault).
+      SECRET_KEY_BASE: "teen3pieYelohyaich8saibegaish2oot1fa8EP8abi6shiezooFiex4su5baingohgaeVe4heith8oy6shihaizaeviorae8shahlei7ritiFee6pheifo7yi5xooth"
+
+      ## Other
+      WEB_CONCURRENCY: 1

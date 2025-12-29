@@ -241,7 +241,7 @@ PLATFORMS
 
 DEPENDENCIES
   colorize
-  faraday
+  faraday (= 2.14.0)
   pry
   puma (= 7.1.0)
   rack-cors

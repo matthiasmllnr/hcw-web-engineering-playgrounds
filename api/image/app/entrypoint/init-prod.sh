@@ -3,15 +3,7 @@ set -euo pipefail
 ## Load logging utilities
 source /home/app/image/app/scripts/lib/logging.sh
 
-## =========================
-## Ruby Gems Installation
-## =========================
-
-# Make sure gems are present (dev convenience)
-if ! bundle check >/dev/null 2>&1; then
-  log_info "Bundle not satisfied. Installing gems…"
-  bundle install
-fi
+log_info "Starting API (production)..."
 
 ## =========================
 ## Cleanup tmp/pids
@@ -28,4 +20,4 @@ mkdir -p tmp/pids
 ## =========================
 
 log_info "Starting puma app server..."
-bundle exec rails server -b 0.0.0.0 -p $RAILS_PORT
+exec bundle exec rails server -b 0.0.0.0 -p "${RAILS_PORT:-3000}"

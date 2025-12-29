@@ -3,7 +3,8 @@ services:
     container_name: playgrounds-gui
     build:
       context: './gui'
-      dockerfile: 'image/Dockerfile-dev'
+      dockerfile: 'image/Dockerfile'
+      target: development
     volumes:
       - ./gui:/home/app/
     ports:
@@ -13,25 +14,19 @@ services:
     restart: unless-stopped
 
   playgrounds-api:
-    container_name: playgrounds-api
     build:
-      context: './api'
-      dockerfile: 'image/app/Dockerfile-dev'
+      context: ./api
+      dockerfile: image/app/Dockerfile
+      target: development
     ports:
-      - '3000:3000'
+      - "3000:3000"
     volumes:
       - ./api:/home/app
     environment:
-      RAILS_ENV: 'development'
+      RAILS_ENV: "development"
       RAILS_PORT: 3000
 
-      RAILS_FRONTEND_URL: 'http://localhost:4200'
+      RAILS_FRONTEND_URL: "http://localhost:4200"
 
       ## Other
       WEB_CONCURRENCY: 1
-
-      ## Change freely
-      RAILS_DEV_ONLY_BOOT_PUMA_SERVER: 'false'
-    restart: unless-stopped
-    stdin_open: true
-    tty: true

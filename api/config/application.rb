@@ -40,5 +40,8 @@ module App
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    config.app_frontend_url = ENV.fetch("RAILS_FRONTEND_URL") { raise "Missing Frontend URL" }
+    config.allowed_cors_origin = Array(config.app_frontend_url).map(&:strip).uniq
   end
 end

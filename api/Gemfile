@@ -19,6 +19,8 @@ gem "rack-cors"
 
 gem "colorize"
 
+gem 'faraday', "2.14.0"
+
 group :development, :test do
   gem 'pry'
 end

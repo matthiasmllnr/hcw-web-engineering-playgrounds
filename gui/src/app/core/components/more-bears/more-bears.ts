@@ -8,7 +8,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
-import { catchError, of } from 'rxjs';
+import { catchError, finalize, of, shareReplay } from 'rxjs';
 
 @Component({
   selector: 'app-more-bears',
@@ -41,6 +41,8 @@ export class MoreBears {
       this.error = 'Failed to load Wikipedia bears.';
       return of([]);
     }),
+    finalize(() => (this.loading = false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   constructor() {
